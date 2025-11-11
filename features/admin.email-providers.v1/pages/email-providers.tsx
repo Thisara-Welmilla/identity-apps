@@ -62,6 +62,13 @@ import { deleteEmailProviderConfigurations,
     updateEmailProviderConfigurations,
     useEmailProviderConfig } from "../api";
 import {
+    handleAuthenticationFormCancel,
+    renderAuthenticationSectionInfoBox,
+    renderEndpointAuthPropertyFields,
+    SecretInputAdornment,
+    showAuthSecretsHint
+} from "../components";
+import {
     AuthenticationType,
     DropdownChild,
     EmailProviderConstants
@@ -168,240 +175,56 @@ const EmailProvidersPage: FunctionComponent<EmailProvidersPageInterface> = (
         }
     }, [ originalEmailProviderConfig ]);
 
-    const renderInputAdornmentOfSecret = (showSecret: boolean, onClick: () => void): ReactElement => (
-        <InputAdornment position="end">
-            <Icon
-                link={ true }
-                className="list-icon reset-field-to-default-adornment"
-                size="small"
-                color="grey"
-                name={ !showSecret ? "eye" : "eye slash" }
-                data-componentid={ `${componentId}-endpoint-authentication-property-secret-view-button` }
-                onClick={ onClick }
-            />
-        </InputAdornment>
-    );
-
     const handleAuthenticationChangeCancel = (): void => {
-        setIsAuthenticationUpdateFormState(false);
-        if (formState.current) {
-            formState.current.change("userName", "");
-            formState.current.change("password", "");
-            formState.current.change("clientId", "");
-            formState.current.change("clientSecret", "");
-            formState.current.change("tokenEndpoint", "");
-            formState.current.change("scopes", "");
+        handleAuthenticationFormCancel({
+            formState,
+            setIsAuthenticationUpdateFormState
+        });
+    };
+
+    const resolveAuthTypeDisplayName = (): string => {
+        if (originalEmailProviderConfig[0]) {
+            switch (originalEmailProviderConfig[0].authType) {
+                case AuthenticationType.BASIC:
+                    return t("emailProviders:fields.authentication.types.basic.name");
+                case AuthenticationType.CLIENT_CREDENTIAL:
+                    return t("emailProviders:fields.authentication.types.clientCredential.name");
+                default:
+                    return;
+            }
         }
     };
 
-    const renderAuthenticationSectionInfoBox = (): ReactElement => {
-        const resolveAuthTypeDisplayName = (): string => {
-            if (originalEmailProviderConfig[0]) {
-                switch (originalEmailProviderConfig[0].authType) {
-                    case AuthenticationType.BASIC:
-                        return t("emailProviders:fields.authentication.types.basic.name");
-                    case AuthenticationType.CLIENT_CREDENTIAL:
-                        return t("emailProviders:fields.authentication.types.clientCredential.name");
-                    default:
-                        return;
-                }
-            }
-        };
-
-        return (
-            <Alert className="alert-nutral" icon={ false }>
-                <AlertTitle
-                    className="alert-title"
-                    data-componentid={ `${componentId}-authentication-info-box-title` }
-                >
-                    <Trans
-                        i18nKey={
-                            t("actions:fields.authentication.info.title.otherAuthType",
-                                { authType: resolveAuthTypeDisplayName() } )
-                        }
-                        components={ { strong: <strong/> } }
-                    />
-                </AlertTitle>
-                <Trans
-                    i18nKey={ t("actions:fields.authentication.info.message") }
-                >
-                    If you are changing the authentication, be aware that the authentication secrets of
-                    the external endpoint need to be updated.
-                </Trans>
-                <div>
-                    <Button
-                        onClick={ handleAuthenticationChange }
-                        variant="outlined"
-                        size="small"
-                        className={ "secondary-button" }
-                        data-componentid={ `${ componentId }-change-authentication-button` }
-                    >
-                        { t("actions:buttons.changeAuthentication") }
-                    </Button>
-                </div>
-            </Alert>
+    const renderAuthenticationSectionInfoBoxWrapper = (): ReactElement => {
+        return renderAuthenticationSectionInfoBox(
+            resolveAuthTypeDisplayName(),
+            t("actions:fields.authentication.info.title.otherAuthType",
+                { authType: resolveAuthTypeDisplayName() }),
+            t("actions:fields.authentication.info.message"),
+            t("actions:buttons.changeAuthentication"),
+            handleAuthenticationChange,
+            `${componentId}-authentication-info-box`
         );
     };
 
-    const showAuthSecretsHint = (): ReactElement => {
-        if (originalEmailProviderConfig[0]) {
-            return (
-                <Hint className="hint-text" compact>
-                    { t("emailProviders:fields.authenticationTypeDropdown.hint.update") }
-                </Hint>
-            );
-        } else {
-            return (
-                <Hint className="hint-text" compact>
-                    { t("emailProviders:fields.authenticationTypeDropdown.hint.create") }
-                </Hint>
-            );
-        }
+    const showAuthSecretsHintWrapper = (): ReactElement => {
+        return showAuthSecretsHint(
+            !!originalEmailProviderConfig[0],
+            "emailProviders:fields.authenticationTypeDropdown.hint.create",
+            "emailProviders:fields.authenticationTypeDropdown.hint.update"
+        );
     };
 
-    const renderEndpointAuthPropertyFields = (): ReactElement => {
-        switch (endpointAuthType) {
-            case AuthenticationType.BASIC:
-                return (
-                    <>
-                        <Field.Input
-                            ariaLabel="username"
-                            className="addon-field-wrapper"
-                            name="userName"
-                            label={ t(
-                                "emailProviders:fields.authenticationTypeDropdown.authProperties.username.label"
-                            ) }
-                            placeholder={ t(
-                                "emailProviders:fields.authenticationTypeDropdown.authProperties.username.placeholder"
-                            ) }
-                            inputType="password"
-                            type={ showPrimarySecret ? "text" : "password" }
-                            InputProps={ {
-                                endAdornment: renderInputAdornmentOfSecret(showPrimarySecret, () =>
-                                    setShowPrimarySecret(!showPrimarySecret)
-                                )
-                            } }
-                            required={ true }
-                            maxLength={ 100 }
-                            minLength={ 0 }
-                            data-componentid={ `${componentId}-endpoint-authentication-property-username` }
-                            width={ 16 }
-                        />
-                        <Field.Input
-                            ariaLabel="password"
-                            className="addon-field-wrapper"
-                            label={ t(
-                                "emailProviders:fields.authenticationTypeDropdown.authProperties.password.label"
-                            ) }
-                            placeholder={ t(
-                                "emailProviders:fields.authenticationTypeDropdown.authProperties.password.placeholder"
-                            ) }
-                            name="password"
-                            inputType="password"
-                            type={ showSecondarySecret ? "text" : "password" }
-                            InputProps={ {
-                                endAdornment: renderInputAdornmentOfSecret(showSecondarySecret, () =>
-                                    setShowSecondarySecret(!showSecondarySecret)
-                                )
-                            } }
-                            required={ true }
-                            maxLength={ 100 }
-                            minLength={ 0 }
-                            data-componentid={ `${componentId}-endpoint-authentication-property-password` }
-                            width={ 16 }
-                        />
-                    </>
-                );
-            case AuthenticationType.CLIENT_CREDENTIAL:
-                return (
-                    <>
-                        <Field.Input
-                            ariaLabel="clientId"
-                            className="addon-field-wrapper"
-                            name="clientId"
-                            inputType="password"
-                            type={ showPrimarySecret ? "text" : "password" }
-                            InputProps={ {
-                                endAdornment: renderInputAdornmentOfSecret(showPrimarySecret, () =>
-                                    setShowSecondarySecret(!showPrimarySecret)
-                                )
-                            } }
-                            label={ t(
-                                "emailProviders:fields.authenticationTypeDropdown.authProperties.clientID.label"
-                            ) }
-                            placeholder={ t(
-                                "emailProviders:fields.authenticationTypeDropdown.authProperties.clientID.placeholder"
-                            ) }
-                            required={ true }
-                            maxLength={ 100 }
-                            minLength={ 0 }
-                            data-componentid={ `${componentId}-endpoint-authentication-property-value` }
-                            width={ 16 }
-                        />
-                        <Field.Input
-                            ariaLabel="clientSecret"
-                            className="addon-field-wrapper"
-                            name="clientSecret"
-                            inputType="password"
-                            type={ showSecondarySecret ? "text" : "password" }
-                            InputProps={ {
-                                endAdornment: renderInputAdornmentOfSecret(showSecondarySecret, () =>
-                                    setShowSecondarySecret(!showSecondarySecret)
-                                )
-                            } }
-                            label={ t(
-                                "emailProviders:fields.authenticationTypeDropdown.authProperties.clientSecret.label"
-                            ) }
-                            placeholder={ t(
-                                "emailProviders:fields.authenticationTypeDropdown.authProperties." +
-                                "clientSecret.placeholder"
-                            ) }
-                            required={ true }
-                            maxLength={ 100 }
-                            minLength={ 0 }
-                            data-componentid={ `${componentId}-endpoint-authentication-property-value` }
-                            width={ 16 }
-                        />
-                        <Field.Input
-                            ariaLabel="tokenEndpoint"
-                            name="tokenEndpoint"
-                            inputType="text"
-                            type={ "text" }
-                            label={ t(
-                                "emailProviders:fields.authenticationTypeDropdown.authProperties.tokenEndpoint.label"
-                            ) }
-                            placeholder={ t(
-                                "emailProviders:fields.authenticationTypeDropdown.authProperties." +
-                                "tokenEndpoint.placeholder"
-                            ) }
-                            required={ true }
-                            maxLength={ 100 }
-                            minLength={ 0 }
-                            data-componentid={ `${componentId}-endpoint-authentication-property-value` }
-                            width={ 16 }
-                        />
-                        <Field.Input
-                            ariaLabel="scopes"
-                            name="scopes"
-                            inputType="text"
-                            type={ "text" }
-                            label={ t(
-                                "emailProviders:fields.authenticationTypeDropdown.authProperties.scopes.label"
-                            ) }
-                            placeholder={ t(
-                                "emailProviders:fields.authenticationTypeDropdown.authProperties.scopes.placeholder"
-                            ) }
-                            required={ true }
-                            maxLength={ 100 }
-                            minLength={ 0 }
-                            data-componentid={ `${componentId}-endpoint-authentication-property-value` }
-                            width={ 16 }
-                        />
-                    </>
-                );
-            default:
-                break;
-        }
+    const renderEndpointAuthPropertyFieldsWrapper = (): ReactElement => {
+        return renderEndpointAuthPropertyFields(
+            endpointAuthType,
+            showPrimarySecret,
+            showSecondarySecret,
+            () => setShowPrimarySecret(!showPrimarySecret),
+            () => setShowSecondarySecret(!showSecondarySecret),
+            t,
+            componentId
+        );
     };
 
     /**
@@ -1151,9 +974,9 @@ const EmailProvidersPage: FunctionComponent<EmailProvidersPageInterface> = (
                                                                         }
                                                                         width={ 16 }
                                                                     />
-                                                                    { showAuthSecretsHint() }
+                                                                    { showAuthSecretsHintWrapper() }
 
-                                                                    { renderEndpointAuthPropertyFields() }
+                                                                    { renderEndpointAuthPropertyFieldsWrapper() }
 
                                                                     { isAuthenticationUpdateFormState && (
                                                                         <Button
@@ -1174,7 +997,7 @@ const EmailProvidersPage: FunctionComponent<EmailProvidersPageInterface> = (
                                                         {
                                                             (originalEmailProviderConfig[0] &&
                                                             !isAuthenticationUpdateFormState) &&
-                                                            renderAuthenticationSectionInfoBox()
+                                                            renderAuthenticationSectionInfoBoxWrapper()
                                                         }
                                                     </div>
                                                     ) }
