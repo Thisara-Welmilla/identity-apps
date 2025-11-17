@@ -20,7 +20,7 @@ import Alert from "@oxygen-ui/react/Alert";
 import AlertTitle from "@oxygen-ui/react/AlertTitle";
 import Button from "@oxygen-ui/react/Button";
 import InputAdornment from "@oxygen-ui/react/InputAdornment";
-import { Field } from "@wso2is/form";
+import { FinalFormField, TextFieldAdapter } from "@wso2is/form";
 import { Hint } from "@wso2is/react-components";
 import { FormApi } from "final-form";
 import React, { FunctionComponent, MutableRefObject, ReactElement } from "react";
@@ -305,6 +305,10 @@ export interface EndpointAuthPropertyFieldsPropsInterface {
      * Component ID for testing.
      */
     componentId: string;
+    /**
+     * Is read-only mode.
+     */
+    isReadOnly: boolean;
 }
 
 /**
@@ -323,124 +327,152 @@ export const EndpointAuthPropertyFields: FunctionComponent<EndpointAuthPropertyF
         onTogglePrimarySecret,
         onToggleSecondarySecret,
         t,
-        componentId
+        componentId,
+        isReadOnly
     } = props;
 
     switch (authType) {
         case "BASIC":
             return (
                 <>
-                    <Field.Input
+                    <FinalFormField
+                        key="userName"
+                        fullWidth
+                        FormControlProps={ {
+                            margin: "dense"
+                        } }
                         ariaLabel="username"
-                        className="addon-field-wrapper"
+                        readOnly={ isReadOnly }
+                        required={ true }
+                        data-componentid={ `${componentId}-endpoint-authentication-property-username` }
                         name="userName"
+                        type={ showPrimarySecret ? "text" : "password" }
                         label={ t("externalApiAuthentication:fields.authenticationTypeDropdown.authProperties.username.label") }
                         placeholder={ t(
                             "externalApiAuthentication:fields.authenticationTypeDropdown.authProperties.username.placeholder"
                         ) }
-                        inputType="password"
-                        type={ showPrimarySecret ? "text" : "password" }
+                        component={ TextFieldAdapter }
+                        maxLength={ 100 }
+                        minLength={ 0 }
+                        autoComplete="new-password"
                         InputProps={ {
                             endAdornment: (
                                 <SecretInputAdornment
                                     showSecret={ showPrimarySecret }
                                     onClick={ onTogglePrimarySecret }
-                                    data-componentid={ `${componentId}-endpoint-authentication-property-username` }
+                                    data-componentid={ `${componentId}-endpoint-authentication-property-username-toggle` }
                                 />
                             )
                         } }
-                        required={ true }
-                        maxLength={ 100 }
-                        minLength={ 0 }
-                        data-componentid={ `${componentId}-endpoint-authentication-property-username` }
-                        width={ 16 }
                     />
-                    <Field.Input
+                    <FinalFormField
+                        key="password"
+                        fullWidth
+                        FormControlProps={ {
+                            margin: "dense"
+                        } }
                         ariaLabel="password"
-                        className="addon-field-wrapper"
+                        readOnly={ isReadOnly }
+                        required={ true }
+                        data-componentid={ `${componentId}-endpoint-authentication-property-password` }
+                        name="password"
+                        type={ showSecondarySecret ? "text" : "password" }
                         label={ t("externalApiAuthentication:fields.authenticationTypeDropdown.authProperties.password.label") }
                         placeholder={ t(
                             "externalApiAuthentication:fields.authenticationTypeDropdown.authProperties.password.placeholder"
                         ) }
-                        name="password"
-                        inputType="password"
-                        type={ showSecondarySecret ? "text" : "password" }
+                        component={ TextFieldAdapter }
+                        maxLength={ 100 }
+                        minLength={ 0 }
+                        autoComplete="new-password"
                         InputProps={ {
                             endAdornment: (
                                 <SecretInputAdornment
                                     showSecret={ showSecondarySecret }
                                     onClick={ onToggleSecondarySecret }
-                                    data-componentid={ `${componentId}-endpoint-authentication-property-password` }
+                                    data-componentid={ `${componentId}-endpoint-authentication-property-password-toggle` }
                                 />
                             )
                         } }
-                        required={ true }
-                        maxLength={ 100 }
-                        minLength={ 0 }
-                        data-componentid={ `${componentId}-endpoint-authentication-property-password` }
-                        width={ 16 }
                     />
                 </>
             );
         case "CLIENT_CREDENTIAL":
             return (
                 <>
-                    <Field.Input
+                    <FinalFormField
+                        key="clientId"
+                        fullWidth
+                        FormControlProps={ {
+                            margin: "dense"
+                        } }
                         ariaLabel="clientId"
-                        className="addon-field-wrapper"
+                        readOnly={ isReadOnly }
+                        required={ true }
+                        data-componentid={ `${componentId}-endpoint-authentication-property-clientId` }
                         name="clientId"
-                        inputType="password"
                         type={ showPrimarySecret ? "text" : "password" }
+                        label={ t("externalApiAuthentication:fields.authenticationTypeDropdown.authProperties.clientID.label") }
+                        placeholder={ t(
+                            "externalApiAuthentication:fields.authenticationTypeDropdown.authProperties.clientID.placeholder"
+                        ) }
+                        component={ TextFieldAdapter }
+                        maxLength={ 100 }
+                        minLength={ 0 }
+                        autoComplete="new-password"
                         InputProps={ {
                             endAdornment: (
                                 <SecretInputAdornment
                                     showSecret={ showPrimarySecret }
                                     onClick={ onTogglePrimarySecret }
-                                    data-componentid={ `${componentId}-endpoint-authentication-property-clientId` }
+                                    data-componentid={ `${componentId}-endpoint-authentication-property-clientId-toggle` }
                                 />
                             )
                         } }
-                        label={ t("externalApiAuthentication:fields.authenticationTypeDropdown.authProperties.clientID.label") }
-                        placeholder={ t(
-                            "externalApiAuthentication:fields.authenticationTypeDropdown.authProperties.clientID.placeholder"
-                        ) }
-                        required={ true }
-                        maxLength={ 100 }
-                        minLength={ 0 }
-                        data-componentid={ `${componentId}-endpoint-authentication-property-value` }
-                        width={ 16 }
                     />
-                    <Field.Input
-                        ariaLabel="clientSecret"
-                        className="addon-field-wrapper"
-                        name="clientSecret"
-                        inputType="password"
-                        type={ showSecondarySecret ? "text" : "password" }
-                        InputProps={ {
-                            endAdornment: (
-                                <SecretInputAdornment
-                                    showSecret={ showSecondarySecret }
-                                    onClick={ onToggleSecondarySecret }
-                                    data-componentid={ `${componentId}-endpoint-authentication-property-clientSecret` }
-                                />
-                            )
+                    <FinalFormField
+                        key="clientSecret"
+                        fullWidth
+                        FormControlProps={ {
+                            margin: "dense"
                         } }
+                        ariaLabel="clientSecret"
+                        readOnly={ isReadOnly }
+                        required={ true }
+                        data-componentid={ `${componentId}-endpoint-authentication-property-clientSecret` }
+                        name="clientSecret"
+                        type={ showSecondarySecret ? "text" : "password" }
                         label={ t(
                             "externalApiAuthentication:fields.authenticationTypeDropdown.authProperties.clientSecret.label"
                         ) }
                         placeholder={ t(
                             "externalApiAuthentication:fields.authenticationTypeDropdown.authProperties.clientSecret.placeholder"
                         ) }
-                        required={ true }
+                        component={ TextFieldAdapter }
                         maxLength={ 100 }
                         minLength={ 0 }
-                        data-componentid={ `${componentId}-endpoint-authentication-property-value` }
-                        width={ 16 }
+                        autoComplete="new-password"
+                        InputProps={ {
+                            endAdornment: (
+                                <SecretInputAdornment
+                                    showSecret={ showSecondarySecret }
+                                    onClick={ onToggleSecondarySecret }
+                                    data-componentid={ `${componentId}-endpoint-authentication-property-clientSecret-toggle` }
+                                />
+                            )
+                        } }
                     />
-                    <Field.Input
+                    <FinalFormField
+                        key="tokenEndpoint"
+                        fullWidth
+                        FormControlProps={ {
+                            margin: "dense"
+                        } }
                         ariaLabel="tokenEndpoint"
+                        readOnly={ isReadOnly }
+                        required={ true }
+                        data-componentid={ `${componentId}-endpoint-authentication-property-tokenEndpoint` }
                         name="tokenEndpoint"
-                        inputType="text"
                         type="text"
                         label={ t(
                             "externalApiAuthentication:fields.authenticationTypeDropdown.authProperties.tokenEndpoint.label"
@@ -448,26 +480,31 @@ export const EndpointAuthPropertyFields: FunctionComponent<EndpointAuthPropertyF
                         placeholder={ t(
                             "externalApiAuthentication:fields.authenticationTypeDropdown.authProperties.tokenEndpoint.placeholder"
                         ) }
-                        required={ true }
+                        component={ TextFieldAdapter }
                         maxLength={ 100 }
                         minLength={ 0 }
-                        data-componentid={ `${componentId}-endpoint-authentication-property-value` }
-                        width={ 16 }
+                        autoComplete="new-password"
                     />
-                    <Field.Input
+                    <FinalFormField
+                        key="scopes"
+                        fullWidth
+                        FormControlProps={ {
+                            margin: "dense"
+                        } }
                         ariaLabel="scopes"
+                        readOnly={ isReadOnly }
+                        required={ true }
+                        data-componentid={ `${componentId}-endpoint-authentication-property-scopes` }
                         name="scopes"
-                        inputType="text"
                         type="text"
                         label={ t("externalApiAuthentication:fields.authenticationTypeDropdown.authProperties.scopes.label") }
                         placeholder={ t(
                             "externalApiAuthentication:fields.authenticationTypeDropdown.authProperties.scopes.placeholder"
                         ) }
-                        required={ true }
+                        component={ TextFieldAdapter }
                         maxLength={ 100 }
                         minLength={ 0 }
-                        data-componentid={ `${componentId}-endpoint-authentication-property-value` }
-                        width={ 16 }
+                        autoComplete="new-password"
                     />
                 </>
             );
@@ -486,6 +523,7 @@ export const EndpointAuthPropertyFields: FunctionComponent<EndpointAuthPropertyF
  * @param onToggleSecondarySecret - Callback to toggle secondary secret visibility.
  * @param t - Translation function.
  * @param componentId - Component ID for testing.
+ * @param isReadOnly - Is read-only mode.
  * @returns Endpoint auth property fields element.
  */
 export const renderEndpointAuthPropertyFields = (
@@ -495,7 +533,8 @@ export const renderEndpointAuthPropertyFields = (
     onTogglePrimarySecret: () => void,
     onToggleSecondarySecret: () => void,
     t: (key: string) => string,
-    componentId: string
+    componentId: string,
+    isReadOnly: boolean
 ): ReactElement => {
     return (
         <EndpointAuthPropertyFields
@@ -506,6 +545,7 @@ export const renderEndpointAuthPropertyFields = (
             onToggleSecondarySecret={ onToggleSecondarySecret }
             t={ t }
             componentId={ componentId }
+            isReadOnly={ isReadOnly }
         />
     );
 };

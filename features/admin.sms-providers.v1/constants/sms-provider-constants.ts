@@ -16,7 +16,20 @@
  * under the License.
  */
 
+import {
+    AuthenticationType,
+    ExternalApiAuthenticationConstants
+} from "@wso2is/admin.core.v1/constants";
 import { IdentityAppsError } from "@wso2is/core/errors";
+
+/**
+ * Interface for the authentication type dropdown options.
+ */
+export interface DropdownChild {
+    key: AuthenticationType;
+    text: string;
+    value: AuthenticationType;
+}
 
 export class SMSProviderConstants {
 
@@ -42,6 +55,31 @@ export class SMSProviderConstants {
     public static readonly SMS_PROVIDER_CONFIG_FIELD_MAX_LENGTH: number = 100;
     public static readonly SMS_PROVIDER_CONFIG_TEMPLATE_FIELD_MAX_LENGTH: number = 1020;
     public static readonly SMS_REGEX: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Re-export common authentication constants for backward compatibility
+    public static readonly USERNAME: string = ExternalApiAuthenticationConstants.USERNAME;
+    public static readonly PASSWORD: string = ExternalApiAuthenticationConstants.PASSWORD;
+    public static readonly CLIENT_ID: string = ExternalApiAuthenticationConstants.CLIENT_ID;
+    public static readonly CLIENT_SECRET: string = ExternalApiAuthenticationConstants.CLIENT_SECRET;
+    public static readonly TOKEN_ENDPOINT: string = ExternalApiAuthenticationConstants.TOKEN_ENDPOINT;
+    public static readonly SCOPES: string = ExternalApiAuthenticationConstants.SCOPES;
+    public static readonly AUTHENTICATION_TYPE: string = ExternalApiAuthenticationConstants.AUTHENTICATION_TYPE;
+
+    public static readonly AUTHENTICATION_TYPE_BASIC: string = ExternalApiAuthenticationConstants.AUTHENTICATION_TYPE_BASIC;
+    public static readonly AUTHENTICATION_TYPE_CLIENT_CREDENTIAL: string = ExternalApiAuthenticationConstants.AUTHENTICATION_TYPE_CLIENT_CREDENTIAL;
+
+    public static readonly AUTH_TYPES: DropdownChild[] = [
+        {
+            key: AuthenticationType.BASIC,
+            text: "smsProviders:fields.authentication.types.basic.name",
+            value: AuthenticationType.BASIC
+        },
+        {
+            key: AuthenticationType.CLIENT_CREDENTIAL,
+            text: "smsProviders:fields.authentication.types.clientCredential.name",
+            value: AuthenticationType.CLIENT_CREDENTIAL
+        }
+    ];
 
     public static ErrorMessages: {
         SMS_PROVIDER_CONFIG_FETCH_ERROR_CODE: IdentityAppsError;

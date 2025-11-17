@@ -16,9 +16,9 @@
  * under the License.
  */
 
-import { EmailProviderNS } from "../../../models/namespaces/external-api-authentication-ns";
+import { ExternalApiAuthenticationNS } from "@wso2is/admin.core.v1/models";
 
-export const emailProviders: EmailProviderNS = {
+export const externalApiAuthentication: ExternalApiAuthenticationNS = {
     fields: {
         authentication: {
             info: {

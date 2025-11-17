@@ -23,6 +23,7 @@ export interface SMSProviderAPIResponseInterface {
     key: string;
     secret: string;
     sender: string;
+    authentication: AuthenticationnInterface;
     contentType: string;
     properties: SMSProviderPropertiesInterface[];
 }
@@ -34,6 +35,14 @@ export interface SMSProviderPropertiesInterface {
 
 export interface SMSProviderPropertiesObjectInterface {
     [key: string]: string;
+}
+
+export interface AuthenticationnInterface {
+    authType: AuthType;
+    clientId: string;
+    clientSecret: string;
+    scopes: string;
+    tokenEndpoint: string;
 }
 
 export interface SMSProviderInterface {
@@ -53,6 +62,11 @@ export interface SMSProviderInterface {
     headers?: string;
     payload?: string;
     httpMethod?: string;
+    authType?: AuthType;
+    clientId?: string;
+    clientSecret?: string;
+    tokenEndpoint?: string;
+    scopes?: string;
 }
 
 export interface SMSProviderAPIInterface {
@@ -62,6 +76,7 @@ export interface SMSProviderAPIInterface {
     key: string;
     secret: string;
     sender: string;
+    authentication: AuthenticationnInterface;
     contentType: string;
     properties: SMSProviderPropertiesInterface[];
 }
@@ -78,6 +93,13 @@ export enum ContentType {
     FORM = "FORM"
 }
 
+export enum AuthType {
+    BEARER = "BEARER",
+    BASIC = "BASIC",
+    API_KEY = "API_KEY",
+    CLIENT_CREDNTIAL = "CLIENT_CREDNTIAL"
+}
+
 export interface SMSProviderConfigFormErrorValidationsInterface {
     provider?: string;
     providerURL?: string;
@@ -92,6 +114,11 @@ export interface SMSProviderConfigFormErrorValidationsInterface {
     vonageKey?: string;
     vonageSecret?: string;
     vonageSender?: string;
+    authType?: AuthType;
+    clientId?: string;
+    clientSecret?: string;
+    tokenEndpoint?: string;
+    scopes?: string;
 }
 
 export interface SMSProviderCardInterface {

@@ -69,6 +69,7 @@ const SMSProviders: FunctionComponent<SMSProviderPageInterface> = (
     } = props;
     const featureConfig: FeatureConfigInterface = useSelector((state: AppState) => state.config.ui.features);
 
+    const [ isAuthenticationUpdateFormState, setIsAuthenticationUpdateFormState ] = useState<boolean>(false);
     const [ isOpenRevertConfigModal, setOpenRevertConfigModal ] = useState<boolean>(false);
     const { getLink } = useDocumentation();
     const { t } = useTranslation();
@@ -188,7 +189,11 @@ const SMSProviders: FunctionComponent<SMSProviderPageInterface> = (
                     } else {
                         configuredSMSProvider.key = provider.key;
                         configuredSMSProvider.secret = provider.secret;
-                        configuredSMSProvider.sender = provider.sender;
+                        configuredSMSProvider.authType = provider.authentication?.authType;
+                        configuredSMSProvider.clientId = provider.authentication?.clientId;
+                        configuredSMSProvider.clientSecret = provider.authentication?.clientSecret;
+                        configuredSMSProvider.scopes = provider.authentication?.scopes;
+                        configuredSMSProvider.tokenEndpoint = provider.authentication?.tokenEndpoint;
                     }
                     acc[configuredProvider] = configuredSMSProvider;
 
@@ -279,7 +284,14 @@ const SMSProviders: FunctionComponent<SMSProviderPageInterface> = (
                     values.vonageSecret : values.secret,
             sender: selectedProvider === SMSProviderConstants.TWILIO_SMS_PROVIDER ?
                 values?.twilioSender : selectedProvider === SMSProviderConstants.VONAGE_SMS_PROVIDER ?
-                    values.vonageSender : values.sender
+                    values.vonageSender : values.sender,
+            authentication: selectedProvider === SMSProviderConstants.CUSTOM ? {
+                authType: values?.authType,
+                clientId: values?.clientId,
+                clientSecret: values?.clientSecret,
+                scopes: values?.scopes,
+                tokenEndpoint: values?.tokenEndpoint
+            } : undefined
         };
 
         if (values.providerURL) {
@@ -329,7 +341,12 @@ const SMSProviders: FunctionComponent<SMSProviderPageInterface> = (
                 provider: updatedData.provider,
                 providerURL: updatedData.providerURL,
                 secret: updatedData.secret,
-                sender: updatedData.sender
+                sender: updatedData.sender,
+                authType: updatedData.authentication?.authType,
+                clientId: updatedData.authentication?.clientId,
+                clientSecret: updatedData.authentication?.clientSecret,
+                tokenEndpoint: updatedData.authentication?.tokenEndpoint,
+                scopes: updatedData.authentication?.scopes
             };
             const updatedParams: { [key: string]: SMSProviderInterface } =
                         { ...defaultProviderParams, [selectedProvider as string]: updatedSMSProvider };
@@ -395,7 +412,12 @@ const SMSProviders: FunctionComponent<SMSProviderPageInterface> = (
             twilioSender: undefined,
             vonageKey: undefined,
             vonageSecret: undefined,
-            vonageSender: undefined
+            vonageSender: undefined,
+            clientId: undefined,
+            clientSecret: undefined,
+            tokenEndpoint: undefined,
+            scopes: undefined,
+            authType: undefined
         };
 
         if (smsProviderSettings.selectedProvider === "TwilioSMSProvider") {
@@ -607,6 +629,9 @@ const SMSProviders: FunctionComponent<SMSProviderPageInterface> = (
                                                     isLoading={ isSubmitting }
                                                     isReadOnly={ !hasSMSProvidersUpdatePermission }
                                                     onSubmit={ handleSubmit }
+                                                    originalSMSProviderConfig={ originalSMSProviderConfig }
+                                                    isAuthenticationUpdateFormState={ isAuthenticationUpdateFormState }
+                                                    setIsAuthenticationUpdateFormState={ setIsAuthenticationUpdateFormState }
                                                     data-componentid={ "custom-sms-provider" }
                                                 />
                                                 { smsProviderConfig.renderAlternativeSmsProviderOptions({
@@ -686,7 +711,7 @@ const SMSProviders: FunctionComponent<SMSProviderPageInterface> = (
                                     setOpenRevertConfigModal(false);
                                     setExistingSMSProviders([]);
                                 });
-
+                                setIsAuthenticationUpdateFormState(false);
                             } }
                             closeOnDimmerClick={ false }
                         >

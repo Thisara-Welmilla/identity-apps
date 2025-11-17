@@ -16,7 +16,14 @@
  * under the License.
  */
 
+import {
+    AuthenticationType,
+    ExternalApiAuthenticationConstants
+} from "@wso2is/admin.core.v1/constants";
 import { IdentityAppsError } from "@wso2is/core/errors";
+
+// Re-export AuthenticationType for use in this module
+export { AuthenticationType };
 
 /**
  * Interface for the authentication type dropdown options.
@@ -27,14 +34,6 @@ export interface DropdownChild {
     value: AuthenticationType;
 }
 
-/**
- * Enum for the authentication types.
- */
-export enum AuthenticationType {
-    BASIC = "BASIC",
-    CLIENT_CREDENTIAL = "CLIENT_CREDENTIAL"
-}
-
 export class EmailProviderConstants {
 
     private constructor() { }
@@ -42,16 +41,18 @@ export class EmailProviderConstants {
     public static readonly EMAIL_PROVIDER_CONFIG_NAME: string = "EmailPublisher";
     public static readonly REPLY_TO_ADDRESS_KEY: string = "mail.smtp.replyTo";
     public static readonly SIGNATURE_KEY: string = "mail.smtp.signature";
-    public static readonly USERNAME: string = "userName";
-    public static readonly PASSWORD: string = "password";
-    public static readonly CLIENT_ID: string = "clientId";
-    public static readonly CLIENT_SECRET: string = "clientSecret";
-    public static readonly TOKEN_ENDPOINT: string = "tokenEndpoint";
-    public static readonly SCOPES: string = "scopes";
-    public static readonly AUTHENTICATION_TYPE: string = "authenticationType";
+    
+    // Re-export common authentication constants for backward compatibility
+    public static readonly USERNAME: string = ExternalApiAuthenticationConstants.USERNAME;
+    public static readonly PASSWORD: string = ExternalApiAuthenticationConstants.PASSWORD;
+    public static readonly CLIENT_ID: string = ExternalApiAuthenticationConstants.CLIENT_ID;
+    public static readonly CLIENT_SECRET: string = ExternalApiAuthenticationConstants.CLIENT_SECRET;
+    public static readonly TOKEN_ENDPOINT: string = ExternalApiAuthenticationConstants.TOKEN_ENDPOINT;
+    public static readonly SCOPES: string = ExternalApiAuthenticationConstants.SCOPES;
+    public static readonly AUTHENTICATION_TYPE: string = ExternalApiAuthenticationConstants.AUTHENTICATION_TYPE;
 
-    public static readonly AUTHENTICATION_TYPE_BASIC: string = "BASIC";
-    public static readonly AUTHENTICATION_TYPE_CLIENT_CREDENTIAL: string = "CLIENT_CREDENTIAL";
+    public static readonly AUTHENTICATION_TYPE_BASIC: string = ExternalApiAuthenticationConstants.AUTHENTICATION_TYPE_BASIC;
+    public static readonly AUTHENTICATION_TYPE_CLIENT_CREDENTIAL: string = ExternalApiAuthenticationConstants.AUTHENTICATION_TYPE_CLIENT_CREDENTIAL;
 
     public static readonly EMAIL_PROVIDER_CONFIG_FETCH_ERROR_CODE: string = "ASG-EPC-00001";
     public static readonly EMAIL_PROVIDER_CONFIG_FETCH_INVALID_STATUS_CODE_ERROR_CODE: string = "ASG-EPC-00002";
@@ -99,12 +100,12 @@ export class EmailProviderConstants {
     public static readonly AUTH_TYPES: DropdownChild[] = [
         {
             key: AuthenticationType.BASIC,
-            text: "emailProviders:fields.authentication.types.basic.name",
+            text: "externalApiAuthentication:fields.authentication.types.basic.name",
             value: AuthenticationType.BASIC
         },
         {
             key: AuthenticationType.CLIENT_CREDENTIAL,
-            text: "emailProviders:fields.authentication.types.clientCredential.name",
+            text: "externalApiAuthentication:fields.authentication.types.clientCredential.name",
             value: AuthenticationType.CLIENT_CREDENTIAL
         }
     ];

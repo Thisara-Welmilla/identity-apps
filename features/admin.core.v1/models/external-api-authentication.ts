@@ -16,7 +16,7 @@
  * under the License.
  */
 
-export interface EmailProviderNS {
+export interface ExternalApiAuthenticationNS {
     showPassword: {
         alert: {
             title: string;

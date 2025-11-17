@@ -186,9 +186,9 @@ const EmailProvidersPage: FunctionComponent<EmailProvidersPageInterface> = (
         if (originalEmailProviderConfig[0]) {
             switch (originalEmailProviderConfig[0].authType) {
                 case AuthenticationType.BASIC:
-                    return t("emailProviders:fields.authentication.types.basic.name");
+                    return t("externalApiAuthentication:fields.authentication.types.basic.name");
                 case AuthenticationType.CLIENT_CREDENTIAL:
-                    return t("emailProviders:fields.authentication.types.clientCredential.name");
+                    return t("externalApiAuthentication:fields.authentication.types.clientCredential.name");
                 default:
                     return;
             }
@@ -210,8 +210,8 @@ const EmailProvidersPage: FunctionComponent<EmailProvidersPageInterface> = (
     const showAuthSecretsHintWrapper = (): ReactElement => {
         return showAuthSecretsHint(
             !!originalEmailProviderConfig[0],
-            "emailProviders:fields.authenticationTypeDropdown.hint.create",
-            "emailProviders:fields.authenticationTypeDropdown.hint.update"
+            "externalApiAuthentication:fields.authenticationTypeDropdown.hint.create",
+            "externalApiAuthentication:fields.authenticationTypeDropdown.hint.update"
         );
     };
 
@@ -935,7 +935,7 @@ const EmailProvidersPage: FunctionComponent<EmailProvidersPageInterface> = (
                                                         <Divider className="divider-container" />
                                                         <Heading className="heading-container" as="h5">
                                                             {
-                                                                t("emailProviders:fields.authenticationTypeDropdown" +
+                                                                t("externalApiAuthentication:fields.authenticationTypeDropdown" +
                                                                 ".title")
                                                             }
                                                         </Heading>
@@ -950,11 +950,11 @@ const EmailProvidersPage: FunctionComponent<EmailProvidersPageInterface> = (
                                                                         ariaLabel="authType"
                                                                         name="authType"
                                                                         label={ t(
-                                                                            "emailProviders:fields." +
+                                                                            "externalApiAuthentication:fields." +
                                                                             "authenticationTypeDropdown.label"
                                                                         ) }
                                                                         placeholder={ t(
-                                                                            "emailProviders:fields." +
+                                                                            "externalApiAuthentication:fields." +
                                                                             "authenticationTypeDropdown.placeholder"
                                                                         ) }
                                                                         displayEmpty={ true }
